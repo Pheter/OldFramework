@@ -26,4 +26,10 @@ class Plugins {
             $this->plugins[$plugin_name] = new $class_name($this->settings);
         }
     }
+    
+    
+    public function __get($name) {
+        
+        return $this->plugins[$name];
+    }
 }
