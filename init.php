@@ -56,7 +56,7 @@ $Resource = new $class_name($Plugins);
 
 //Apply verb to resource (aka. call the method of the resource eg. $resource->get())
 if (method_exists($Resource, $verb)) {
-    call_user_func_array(array($Resource, $verb), $request['parameters']);
+    echo call_user_func_array(array($Resource, $verb), $request['parameters']);
 } else {
     //TODO: Trigger 405 error message eg. throw new Seed\Exception\405Error;
 }
