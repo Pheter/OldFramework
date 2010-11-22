@@ -11,8 +11,8 @@ class Plugins {
         
         $this->settings = $settings;
         
-        if (property_exists($settings, 'plugins')) {
-            $this->buildPlugins($settings->plugins);
+        if (array_key_exists('plugins', $settings)) {
+            $this->buildPlugins($settings['plugins']);
         }
     }
     

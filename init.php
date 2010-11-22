@@ -35,7 +35,7 @@ require('lib/spyc/spyc.php');
 $Spyc = new Spyc;
 
 //Load settings
-$Settings = array_to_object($Spyc->loadFile('config.yml'));
+$Settings = $Spyc->loadFile('config.yml');
 
 //Build Plugins
 require('Plugins.php');
