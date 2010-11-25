@@ -8,24 +8,13 @@ spl_autoload_register(
     
     function($class_name) {
         
-        //Extra backspaces added because of PHP strings.
-        //Actual regex is: ^Seed\\(?P<type>\w+)\\
-        if (preg_match('/^Seed\\\\(?P<type>\w+)\\\\/', $class_name, $matches)) {
+        $class_name = explode('\\', $class_name);
+        
+        if ($class_name[0] === 'Seed') {
+            $type = $class_name[1];
+            $class_name = $class_name[2];
             
-            //Actual regex is: ^Seed\\\w+\\
-            $class_name = preg_replace('/^Seed\\\\\w+\\\\/', '', $class_name);
-            
-            switch ($matches['type']) {
-                case 'Resources':
-                    require('resources/'.$class_name.'.php');
-                    break;
-                case 'Models':
-                    require('models/'.$class_name.'.php');
-                    break;
-                case 'Views':
-                    require('views/'.$class_name.'.php');
-                    break;
-            }
+            require("$type/$class_name.php");
         }
     }
 );
