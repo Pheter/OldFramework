@@ -25,8 +25,8 @@ class Router {
                 }
                 
                 return array(
-                    'resource' => $resource,
-                    'parameters' => $parameters,
+                    0 => $resource,
+                    1 => $parameters,
                 );
             }
         }

@@ -5,11 +5,13 @@ namespace Seed;
 class Plugins {
     
     private $settings;
+    private $request;
     private $plugins = array();
     
-    public function __construct($settings) {
+    public function __construct($settings, $request) {
         
         $this->settings = $settings;
+        $this->request = $request;
         
         if (array_key_exists('plugins', $settings)) {
             $this->buildPlugins($settings['plugins']);
@@ -23,7 +25,7 @@ class Plugins {
             $class_name = 'Seed\Plugin\\'.$plugin_name;
             
             require("plugins/$plugin_name/$plugin_name.php");
-            $this->plugins[$plugin_name] = new $class_name($this->settings);
+            $this->plugins[$plugin_name] = new $class_name($this->settings, $this->request);
         }
     }
     
