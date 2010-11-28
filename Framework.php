@@ -6,37 +6,78 @@ class Framework {
     
     public function __construct() {
         
-        spl_autoload_register(array($this, 'autoload'));
-        
-        require('lib/spyc/spyc.php');
-        $spyc = new \Spyc;
-        
-        $settings = $spyc->loadFile('config.yml');
-        
-        require('Request.php');
-        $request = new \Seed\Request;
-        
-        require('Plugins.php');
-        $plugins = new \Seed\Plugins($settings, $request);
-        
-        require('Router.php');
-        $router = new \Seed\UrlRouter($spyc->loadFile('routes.yml'));
-        //Route the request and populate the 'resource' and 'path_parameters' properties of the request object.
-        list($request->resource, $request->path_parameters) = $router->route($request->path);
-        
         try {
-            $resource = $this->initResource($request, $plugins);
+            $this->registerAutoload();
+            $spyc = $this->getSpyc();
+            $settings = $this->getSettings($spyc);
+            $request = $this->getRequest();
+            $plugins = $this->getPlugins($settings, $request);
+            $router = $this->getRouter($spyc);
+            list($request->resource, $request->path_parameters) = $router->route($request->path);
+            $resource = $this->getResource($request, $plugins);
+            
+            echo $this->queryResource($resource, $request);
+            
+        } catch (\Exception $e) {
+            
+            require('ExceptionHandler.php');
+            $handler = new ExceptionHandler($settings['debug']);
+            $handler->render($e);
+        }
+    }
+    
+    
+    private function registerAutoload() {
+        spl_autoload_register(array($this, 'autoload'));
+    }
+    
+    
+    private function getSpyc() {
+        require('lib/spyc/spyc.php');
+        return new \Spyc;
+    }
+    
+    
+    private function getSettings($spyc) {
+        return $spyc->loadFile('config.yml');
+    }
+    
+    
+    private function getRequest() {
+        require('Request.php');
+        return new \Seed\Request;
+    }
+    
+    
+    private function getPlugins($settings, $request) {
+        require('Plugins.php');
+        return new \Seed\Plugins($settings, $request);
+    }
+    
+    
+    private function getRouter($spyc) {
+        require('Router.php');
+        return new \Seed\UrlRouter($spyc->loadFile('routes.yml'));
+    }
+    
+    
+    private function getResource($request, $plugins) {
+        try {
+            $class_name = 'Seed\Resources\\'.$request->resource;
+            $method = $request->method;
+            return new $class_name($plugins, $request->data);
         } catch (Exception $e) {
-            //TODO: Trigger 404 error.
+            throw new \Exception('The resourse: '.$request->resource.', does not exist.', null, 404);
         }
-        
+    }
+    
+    
+    private function queryResource($resource, $request) {
         if (method_exists($resource, $request->method)) {
-            $response = call_user_func_array(array($resource, $request->method), $request->path_parameters);
+            return call_user_func_array(array($resource, $request->method), $request->path_parameters);
         } else {
-            //TODO: Trigger 405 error message.
+            throw new \Exception('You cannot use: '.$request->method.', on the resourse: '.$request->resource.'.', null, 405);
         }
-        
-        echo $response;
     }
     
     
@@ -51,12 +92,5 @@ class Framework {
                 require("$type/$class_name.php");
             }
         }
-    }
-    
-    
-    private function initResource($request, $plugins) {
-        $class_name = 'Seed\Resources\\'.$request->resource;
-        $method = $request->method;
-        return new $class_name($plugins, $request->data);
     }
 }
