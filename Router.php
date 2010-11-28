@@ -2,7 +2,7 @@
 
 namespace Seed;
 
-class Router {
+class UrlRouter {
     
     private $routes;
     
