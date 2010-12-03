@@ -1,19 +1,19 @@
 <?php
 
-namespace Seed\Plugin;
-
-class Twig {
+class Plugins_Twig {
     
     private $Twig;
     
     public function __construct($settings) {
         
         require_once 'lib/Twig/Autoloader.php';
-        \Twig_Autoloader::register();
+        Twig_Autoloader::register();
         
-        $loader = new \Twig_Loader_Filesystem('views');
-        $this->Twig = new \Twig_Environment($loader,array(
-                'cache' => 'cache/Twig')
+        $cache_dir = $settings['debug'] ? false : 'cache/Twig';
+        
+        $loader = new Twig_Loader_Filesystem('templates');
+        $this->Twig = new Twig_Environment($loader,array(
+                'cache' => $cache_dir)
         );
     }
     

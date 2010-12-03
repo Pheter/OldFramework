@@ -1,8 +1,6 @@
 <?php
 
-namespace Seed\Plugin;
-
-class ADOdb {
+class Plugins_ADOdb {
     
     private $conn;
     

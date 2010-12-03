@@ -1,7 +1,5 @@
 <?php
 
-namespace Seed;
-
 class Request {
     
     public $path;

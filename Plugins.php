@@ -1,7 +1,5 @@
 <?php
 
-namespace Seed;
-
 class Plugins {
     
     private $settings;
@@ -22,7 +20,7 @@ class Plugins {
     public function buildPlugins($plugins) {
         
         foreach($plugins as $plugin_name) {
-            $class_name = 'Seed\Plugin\\'.$plugin_name;
+            $class_name = 'Plugins_'.$plugin_name;
             
             require("plugins/$plugin_name/$plugin_name.php");
             $this->plugins[$plugin_name] = new $class_name($this->settings, $this->request);

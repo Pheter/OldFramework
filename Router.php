@@ -1,8 +1,6 @@
 <?php
 
-namespace Seed;
-
-class UrlRouter {
+class Router {
     
     private $routes;
     
@@ -31,7 +29,7 @@ class UrlRouter {
             }
         }
         
-        //TODO: Trigger 404 error message
+        throw new Exception('Resource does not exist.', 404);
     }
     
     
